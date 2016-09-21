@@ -37,7 +37,7 @@ node {
             }
             sh "./init"
             sh "terraform get"
-            sh "set +e; terraform plan -out=$DEPLOY_ENV.plan.out -var-file $DEPLOY_ENV/$DEPLOY_ENV.tfvars -detailed-exitcode; echo \$? > status"
+            sh "set +e; terraform plan -out=${DEPLOY_ENV}.plan.out -var-file ${DEPLOY_ENV}/${DEPLOY_ENV}.tfvars -detailed-exitcode; echo \$? > status"
             def exitCode = readFile('status').trim()
 
             echo "Terraform Plan Exit Code: ${exitCode}"
