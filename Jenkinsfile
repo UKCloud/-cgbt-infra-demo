@@ -70,7 +70,7 @@ node {
                 if (fileExists("status.apply")) {
                     sh "rm status.apply"
                 }
-                sh 'set +e; terraform apply -var-file $DEPLOY_ENV/$DEPLOY_ENV.tfvars $DEPLOY_ENV.plan.out; echo \$? > status.apply'
+                sh 'set +e; terraform apply $DEPLOY_ENV.plan.out; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
                     slackSend channel: '#ukcloud-opensource', color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
