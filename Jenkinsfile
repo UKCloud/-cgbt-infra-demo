@@ -1,8 +1,6 @@
 node {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-User',
-        usernameVariable: 'TF_VAR_OS_USERNAME', passwordVariable: 'TF_VAR_OS_PASSWORD'],
-        [$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-Tenant',
-        usernameVariable: 'TF_VAR_OS_TENANT_NAME', passwordVariable: 'TF_VAR_OS_TENANT_ID']]) {
+        usernameVariable: 'TF_VAR_OS_USERNAME', passwordVariable: 'TF_VAR_OS_PASSWORD']]) {
 
     wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
 
@@ -19,10 +17,14 @@ node {
             env.PATH = "${tfHome}:${env.PATH}"
         }
 
-        def apply = false
+        def apply_test = false
+        def apply_preprod = false
+        def apply_prod = false
+
+        env.DEPLOY_ENV = "test"
 
         // Mark the code build 'plan'....
-        stage('Plan') {
+        stage('Test: Plan') {
 
             // Output Terraform version
             sh "terraform --version"
@@ -35,7 +37,7 @@ node {
             }
             sh "./init"
             sh "terraform get"
-            sh "set +e; terraform plan -out=plan.out -var-file preprod/preprod.tfvars -detailed-exitcode; echo \$? > status"
+            sh "set +e; terraform plan -out=$DEPLOY_ENV.plan.out -var-file $DEPLOY_ENV/$DEPLOY_ENV.tfvars -detailed-exitcode; echo \$? > status"
             def exitCode = readFile('status').trim()
 
             echo "Terraform Plan Exit Code: ${exitCode}"
@@ -45,29 +47,30 @@ node {
             if (exitCode == "1") {
                 slackSend channel: '#ukcloud-opensource', color: '#0080ff', message: "Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
                 currentBuild.result = 'FAILURE'
+                error 'Plan failed for Test'
             }
             if (exitCode == "2") {
-                stash name: "plan", includes: "plan.out"
-                slackSend channel: '#ukcloud-opensource', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
-                try {
-                    input message: 'Apply Plan?', ok: 'Apply'
-                    apply = true
-                } catch (err) {
-                    slackSend channel: '#ukcloud-opensource', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
-                    apply = false
-                    currentBuild.result = 'UNSTABLE'
-                }
+                stash name: "test-plan", includes: "${env.DEPLOY_ENV}.plan.out"
+                //slackSend channel: '#ukcloud-opensource', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                //try {
+                //    input message: 'Apply Plan?', ok: 'Apply'
+                    apply_test = true
+                //} catch (err) {
+                //    slackSend channel: '#ukcloud-opensource', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                //    apply_test = false
+                //    currentBuild.result = 'UNSTABLE'
+                //}
             }
         }
      
-        if (apply) {
-            stage('Apply') {
+        stage('Test: Apply') {
+            if (apply_test) {
 
-                unstash 'plan'
+                unstash 'test-plan'
                 if (fileExists("status.apply")) {
                     sh "rm status.apply"
                 }
-                sh 'set +e; terraform apply plan.out; echo \$? > status.apply'
+                sh 'set +e; terraform apply $DEPLOY_ENV.plan.out -var-file $DEPLOY_ENV/$DEPLOY_ENV.tfvars; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
                     slackSend channel: '#ukcloud-opensource', color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    

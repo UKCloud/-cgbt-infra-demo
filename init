@@ -1,7 +1,7 @@
 #!/bin/bash -e
  
 PROJECT="$(basename `pwd`)"
-BUCKET="myorgs-infrastructure-state"
+DEPLOY_ENV="${DEPLOY_ENV:-test}"
  
 init() {
   if [ -d .terraform ]; then
@@ -14,14 +14,9 @@ init() {
   fi
  
  
-  # terraform remote config \
-  #   -backend=s3 \
-  #   -backend-config="bucket=${BUCKET}" \
-  #   -backend-config="key=${PROJECT}/terraform.tfstate" \
-  #   -backend-config="region=us-east-1"
   terraform remote config \
     -backend=consul \
-    -backend-config="path=openshift/preprod"
+    -backend-config="path=$PROJECT/$DEPLOY_ENV"
  
 }
  
