@@ -39,17 +39,17 @@ node {
                     currentBuild.result = 'SUCCESS'
                 }
                 if (exitCode == "1") {
-                    slackSend channel: '#ci', color: '#0080ff', message: "Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackSend channel: '#ukcloud-opensource', color: '#0080ff', message: "Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
                     currentBuild.result = 'FAILURE'
                 }
                 if (exitCode == "2") {
                     stash name: "plan", includes: "plan.out"
-                    slackSend channel: '#ci', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackSend channel: '#ukcloud-opensource', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
                     try {
                         input message: 'Apply Plan?', ok: 'Apply'
                         apply = true
                     } catch (err) {
-                        slackSend channel: '#ci', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                        slackSend channel: '#ukcloud-opensource', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
                         apply = false
                         currentBuild.result = 'UNSTABLE'
                     }
@@ -64,9 +64,9 @@ node {
                     sh 'set +e; terraform apply plan.out; echo \$? &amp;gt; status.apply'
                     def applyExitCode = readFile('status.apply').trim()
                     if (applyExitCode == "0") {
-                        slackSend channel: '#ci', color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
+                        slackSend channel: '#ukcloud-opensource', color: 'good', message: "Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
                     } else {
-                        slackSend channel: '#ci', color: 'danger', message: "Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                        slackSend channel: '#ukcloud-opensource', color: 'danger', message: "Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
                         currentBuild.result = 'FAILURE'
                     }
                 }
