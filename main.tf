@@ -36,7 +36,7 @@ resource "openstack_networking_router_interface_v2" "gw_if_1" {
 }
 
 resource "openstack_compute_keypair_v2" "ssh-keypair" {
-  name       = "terraform-${var.domain_name}"
+  name       = "${var.ssh_keypair_name}"
   public_key = "${file(var.public_key_file)}"
 }
 
