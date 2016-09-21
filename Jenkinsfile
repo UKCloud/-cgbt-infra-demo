@@ -1,9 +1,11 @@
 node {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-User',
-        usernameVariable: 'TF_VAR_OS_USERNAME', passwordVariable: 'TF_VAR_OS_PASSWORD']]) {
-
-    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-Tenant',
+        usernameVariable: 'TF_VAR_OS_USERNAME', passwordVariable: 'TF_VAR_OS_PASSWORD'],
+        [$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-Tenant',
         usernameVariable: 'TF_VAR_OS_TENANT_NAME', passwordVariable: 'TF_VAR_OS_TENANT_ID']]) {
+
+    #withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-Tenant',
+    #    usernameVariable: 'TF_VAR_OS_TENANT_NAME', passwordVariable: 'TF_VAR_OS_TENANT_ID']]) {
 
     timestamps {
 
@@ -71,5 +73,5 @@ node {
                     }
                 }
         }
-    }}}
+    }}#}
 }
