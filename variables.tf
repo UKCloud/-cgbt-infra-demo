@@ -14,3 +14,5 @@ variable "jumpbox_type" { default = "t1.tiny" }
 variable "public_key_file" { default = "~/.ssh/user.pub" }
 variable "private_key_file" { default = "~/.ssh/user.private" }
 
+variable "DMZ_Subnet" { default = "10.0.0.0/24" }
+variable "domain_name" { default = "example.com" }
