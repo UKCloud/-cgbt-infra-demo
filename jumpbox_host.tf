@@ -32,7 +32,7 @@ resource "openstack_compute_instance_v2" "jumpbox_host" {
   connection {
     user = "centos"
     private_key = "${file(var.private_key_file)}"
-    host = "${openstack_compute_floatingip_v2.infra_host_ip.address}"
+    host = "${openstack_compute_floatingip_v2.jumpbox_host_ip.address}"
   }
 
   provisioner "remote-exec" {
