@@ -19,6 +19,8 @@ node {
             env.PATH = "${tfHome}:${env.PATH}"
         }
 
+        def apply = false
+
         // Mark the code build 'plan'....
         stage('Plan') {
 
@@ -35,7 +37,6 @@ node {
             sh "terraform get"
             sh "set +e; terraform plan -out=plan.out -var-file preprod/preprod.tfvars -detailed-exitcode; echo \$? > status"
             def exitCode = readFile('status').trim()
-            def apply = false
 
             echo "Terraform Plan Exit Code: ${exitCode}"
             if (exitCode == "0") {
