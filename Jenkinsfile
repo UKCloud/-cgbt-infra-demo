@@ -5,6 +5,8 @@ node {
     withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'PreProd-OpenStack-Tenant',
         usernameVariable: 'TF_VAR_OS_TENANT_NAME', passwordVariable: 'TF_VAR_OS_TENANT_ID']]) {
 
+    timestamps {
+
         // Mark the code checkout 'Checkout'....
         stage 'Checkout'
      
@@ -69,5 +71,5 @@ node {
                     }
                 }
         }
-    }}
+    }}}
 }
