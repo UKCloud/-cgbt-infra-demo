@@ -78,6 +78,7 @@ node {
                 } else {
                     slackSend channel: '#ukcloud-opensource', color: 'danger', message: "Test: Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
                     currentBuild.result = 'FAILURE'
+                    error 'Apply failed for Test'
                 }
             }
         }
