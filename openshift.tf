@@ -5,7 +5,7 @@ data "template_file" "ansible_hosts" {
 
   vars {
     master_ipaddress = "${join("\n", openstack_compute_instance_v2.master.*.name)}"
-    master_nodes = "${join("\n", formatlist("%s openshift_hostname=%s openshift_node_labels=\"{'region': 'infra', 'zone': 'default', 'router': 'router'}\" openshift_schedulable=true", openstack_compute_instance_v2.master.*.name, openstack_compute_instance_v2.master.*.name))}"
+    master_nodes = "${join("\n", formatlist("%s openshift_node_labels=\"{'region': 'infra', 'zone': 'default', 'router': 'router'}\" openshift_schedulable=true", openstack_compute_instance_v2.master.*.name))}"
     compute_nodes = "${join("\n", formatlist("%s openshift_node_labels=\"{'region': '%s', 'zone': '%s'}\"", openstack_compute_instance_v2.node.*.name, "cor0005", "nova"))}"
     cluster_hostname = "${var.cluster_hostname}"
     domain_name = "${var.domain_name}"
