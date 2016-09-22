@@ -8,7 +8,7 @@ jumpbox_host = terraform["jumpbox_address"]["value"]
 jumpbox_user = terraform["jumpbox_user"]["value"]
 private_key  = terraform["private_key"]["value"]
 
-proxy = Net::SSH::Proxy::Command.new("ssh -i #{private_key} #{jumpbox_user}@#{jumpbox_host} nc %h %p")
+proxy = Net::SSH::Proxy::Command.new("ssh -o 'StrictHostKeyChecking no' -i #{private_key} #{jumpbox_user}@#{jumpbox_host} nc %h %p")
 
 set :backend, :ssh
 
