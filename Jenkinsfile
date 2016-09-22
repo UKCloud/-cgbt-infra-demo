@@ -1,5 +1,5 @@
 def slackMessage(String color, String message) {
-    slackSend channel: '#ukcloud-opensource', color: '${color}', message: "<${env.BUILD_URL}|[${env.JOB_NAME} - build ${env.BUILD_NUMBER}]> ${message}"
+    slackSend channel: '#ukcloud-opensource', color: "${color}", message: "<${env.BUILD_URL}|[${env.JOB_NAME} - build ${env.BUILD_NUMBER}]> ${message}"
 }
 
 node {
