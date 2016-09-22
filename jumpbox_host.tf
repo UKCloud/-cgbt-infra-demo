@@ -37,8 +37,8 @@ resource "openstack_compute_instance_v2" "jumpbox_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities nmap-ncat",
-      "sudo yum update -y --exclude=kernel"
+      "sudo yum -y install epel-release yum-plugin-priorities nmap-ncat"
+      #"sudo yum update -y --exclude=kernel"
     ]
   }
 
