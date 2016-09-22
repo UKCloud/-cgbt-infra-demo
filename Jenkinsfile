@@ -1,12 +1,12 @@
+def slackMessage(String color, String message) {
+    slackSend channel: '#ukcloud-opensource', color: '${color}', message: "<${env.BUILD_URL}|[${env.JOB_NAME} - build ${env.BUILD_NUMBER}]> ${message}"
+}
+
 node {
 
     wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
 
     timestamps {
-
-        def slackMessage(String color, String message) {
-            slackSend channel: '#ukcloud-opensource', color: '${color}', message: "<${env.BUILD_URL}|[${env.JOB_NAME} - build ${env.BUILD_NUMBER}]> ${message}"
-        }
 
         // Mark the code checkout 'Checkout'....
         stage('Checkout') {
