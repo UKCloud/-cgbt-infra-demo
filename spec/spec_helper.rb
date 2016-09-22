@@ -27,7 +27,7 @@ host = ENV['TARGET_HOST']
 
 options = Net::SSH::Config.for(host)
 
-options[:user] ||= Etc.getlogin
+options[:user] = jumpbox_user
 options[:proxy] = proxy
 #options[:verbose] = :debug
 options[:keys] = private_key
