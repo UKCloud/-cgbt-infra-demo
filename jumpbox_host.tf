@@ -30,14 +30,14 @@ resource "openstack_compute_instance_v2" "jumpbox_host" {
   }
 
   connection {
-    user = "centos"
+    user = "${var.ssh_user}"
     private_key = "${file(var.private_key_file)}"
     host = "${openstack_compute_floatingip_v2.jumpbox_host_ip.address}"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities",
+      "sudo yum -y install epel-release yum-plugin-priorities nmap-ncat",
       "sudo yum update -y --exclude=kernel"
     ]
   }

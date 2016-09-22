@@ -17,3 +17,5 @@ variable "private_key_file" { default = "~/.ssh/user.private" }
 
 variable "DMZ_Subnet" { default = "10.0.0.0/24" }
 variable "domain_name" { default = "example.com" }
+
+variable "ssh_user" { default = "centos" }
