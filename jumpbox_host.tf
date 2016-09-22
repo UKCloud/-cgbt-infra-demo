@@ -9,14 +9,6 @@ data "template_file" "jumpbox_config" {
   }
 }
 
-data "template_file" "hosts_file" {
-  template = "${file("hosts.tpl")}"
-
-  vars {
-    HOST_LIST = "${join("\n", formatlist("%s   %s", list(openstack_compute_instance_v2.jumpbox_host.access_ip_v4), list(openstack_compute_instance_v2.jumpbox_host.name) ))}"
-  }
-}
-
 resource "openstack_compute_floatingip_v2" "jumpbox_host_ip" {
   region = ""
   pool = "${var.OS_INTERNET_NAME}"

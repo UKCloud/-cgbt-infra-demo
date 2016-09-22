@@ -10,6 +10,7 @@ variable "OS_INTERNET_NAME" { default = "internet" }
 variable "IMAGE_NAME" { default = "CentOS 7" }
 variable "IMAGE_ID"   { default =  "32af054b-ab6d-448f-a4fd-b6b0ed089cc7" }
 variable "jumpbox_type" { default = "t1.tiny" }
+variable "proxy_type"   { default = "t1.tiny" }
 
 variable "ssh_keypair_name" { default = "terraform-keypair" }
 variable "public_key_file" { default = "~/.ssh/user.pub" }

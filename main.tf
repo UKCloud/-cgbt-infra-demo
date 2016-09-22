@@ -40,5 +40,10 @@ resource "openstack_compute_keypair_v2" "ssh-keypair" {
   public_key = "${file(var.public_key_file)}"
 }
 
+data "template_file" "hosts_file" {
+  template = "${file("hosts.tpl")}"
 
-
+  vars {
+    HOST_LIST = "${join("\n", formatlist("%s   %s", list(openstack_compute_instance_v2.jumpbox_host.access_ip_v4), list(openstack_compute_instance_v2.jumpbox_host.name) ))}"
+  }
+}
