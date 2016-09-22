@@ -25,7 +25,6 @@ resource "openstack_compute_instance_v2" "proxy_host" {
 
   network {
     name = "${openstack_networking_network_v2.dmz.name}"
-    fixed_ip_v4 = "${cidrhost(var.DMZ_Subnet, 5)}"
     floating_ip = "${openstack_compute_floatingip_v2.proxy_host_ip.address}"
   }
 
