@@ -42,7 +42,7 @@ resource "openstack_compute_instance_v2" "proxy_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities"
+      "sudo yum -y install epel-release yum-plugin-priorities haproxy"
       #"sudo yum update -y --exclude=kernel"
     ]
   }
