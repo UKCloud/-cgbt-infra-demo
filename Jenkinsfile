@@ -78,11 +78,23 @@ node {
         }
 
         stage('Test: Regression Tests') {
+            if (fileExists("status.regression")) {
+                sh "rm status.regression"
+            }
+
             sh 'terraform output jumpbox_address > jumpbox.address'
             def jumpbox = readFile('jumpbox.address').trim()
             echo "Running tests via jumpbox ${jumpbox}"
 
-            sh 'bundle install; bundle exec rake -t spec'
+            sh 'bundle install; bundle exec rake -t spec; echo \$? > status.regression'
+            def testsExitCode = readFile('status.regression').trim()
+            if (testsExitCode == "0") {
+                slackMessage('good', 'Test: Regression Tests Successful')
+            } else {
+                slackMessage('danger', 'Test: Regression Tests Failed')
+                currentBuild.result = 'FAILURE'
+                error 'Regression Testing Failed'
+            }
         }
         }
 
