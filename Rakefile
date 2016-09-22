@@ -1,10 +1,12 @@
 require 'rake'
 require 'rspec/core/rake_task'
+require 'json'
 
 task :spec    => 'spec:all'
 task :default => :spec
 
-hosts = `terraform output server_names`.split('\n').map(&:strip)
+terraform = JSON.parse(`terraform output -json server_names`)
+hosts = terraform["value"]
 
 namespace :spec do
   task :all => hosts.map {|h| 'spec:' + h.split('.')[0] }
