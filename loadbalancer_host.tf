@@ -29,6 +29,8 @@ resource "openstack_compute_instance_v2" "proxy_host" {
     floating_ip = "${openstack_compute_floatingip_v2.proxy_host_ip.address}"
   }
 
+  depends_on = [ "openstack_compute_instance_v2.jumpbox_host" ]
+
   connection {
     bastion_host = "${openstack_compute_floatingip_v2.jumpbox_host_ip.address}"
     bastion_user = "centos"
@@ -36,7 +38,7 @@ resource "openstack_compute_instance_v2" "proxy_host" {
 
     user = "${var.ssh_user}"
     private_key = "${file(var.private_key_file)}"
-    host = "${openstack_compute_floatingip_v2.proxy_host.access_ip_v4}"
+    host = "${openstack_compute_instance_v2.proxy_host.access_ip_v4}"
   }
 
   provisioner "remote-exec" {
