@@ -81,6 +81,8 @@ node {
             sh 'terraform output jumpbox_address > jumpbox.address'
             def jumpbox = readFile('jumpbox.address').trim()
             echo "Running tests via jumpbox ${jumpbox}"
+
+            sh 'bundle install; bundle exec rake -t spec'
         }
         }
 
