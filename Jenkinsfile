@@ -4,6 +4,10 @@ node {
 
     timestamps {
 
+        def slackMessage(String color, String message) {
+            slackSend channel: '#ukcloud-opensource', color: '${color}', message: "<${env.BUILD_URL}|[${env.JOB_NAME} - build ${env.BUILD_NUMBER}]> ${message}"
+        }
+
         // Mark the code checkout 'Checkout'....
         stage('Checkout') {
      
@@ -25,7 +29,7 @@ node {
         env.DEPLOY_ENV = "test"
 
         // Mark the code build 'plan'....
-        stage('Test: Plan') {
+        stage('Test: Deploy') {
 
             // Output Terraform version
             sh "terraform --version"
@@ -46,25 +50,15 @@ node {
                 currentBuild.result = 'SUCCESS'
             }
             if (exitCode == "1") {
-                slackSend channel: '#ukcloud-opensource', color: '#0080ff', message: "Test: Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                slackMessage('#0080ff', 'Test: Plan Failed')
                 currentBuild.result = 'FAILURE'
                 error 'Plan failed for Test'
             }
             if (exitCode == "2") {
                 stash name: "test-plan", includes: "${env.DEPLOY_ENV}.plan.out"
-                //slackSend channel: '#ukcloud-opensource', color: 'good', message: "Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
-                //try {
-                //    input message: 'Apply Plan?', ok: 'Apply'
-                    apply_test = true
-                //} catch (err) {
-                //    slackSend channel: '#ukcloud-opensource', color: 'warning', message: "Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
-                //    apply_test = false
-                //    currentBuild.result = 'UNSTABLE'
-                //}
+                apply_test = true
             }
-        }
-     
-        stage('Test: Apply') {
+
             if (apply_test) {
 
                 unstash 'test-plan'
@@ -74,13 +68,19 @@ node {
                 sh 'set +e; terraform apply $DEPLOY_ENV.plan.out; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
-                    slackSend channel: '#ukcloud-opensource', color: 'good', message: "Test: Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
+                    slackMessage('good', 'Test: Changes Applied')
                 } else {
-                    slackSend channel: '#ukcloud-opensource', color: 'danger', message: "Test: Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackMessage('danger', 'Test: Apply Failed')
                     currentBuild.result = 'FAILURE'
                     error 'Apply failed for Test'
                 }
             }
+        }
+
+        stage('Test: Deploy') {
+            sh 'terraform output jumpbox_address > jumpbox.address'
+            def jumpbox = readFile('jumpbox.address').trim()
+            echo "Running tests via jumpbox ${jumpbox}"
         }
         }
 
@@ -111,18 +111,18 @@ node {
                 currentBuild.result = 'SUCCESS'
             }
             if (exitCode == "1") {
-                slackSend channel: '#ukcloud-opensource', color: '#0080ff', message: "PreProd: Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                slackMessage('#0080ff', 'PreProd: Plan Failed')
                 currentBuild.result = 'FAILURE'
                 error 'Plan failed for PreProd'
             }
             if (exitCode == "2") {
                 stash name: "preprod-plan", includes: "${env.DEPLOY_ENV}.plan.out"
-                slackSend channel: '#ukcloud-opensource', color: 'good', message: "PreProd: Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                slackMessage('good', 'PreProd: Plan Awaiting Approval')
                 try {
                     input message: 'Apply Plan?', ok: 'Apply'
                     apply_preprod = true
                 } catch (err) {
-                    slackSend channel: '#ukcloud-opensource', color: 'warning', message: "PreProd: Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackMessage('warning', 'PreProd: Plan Discarded')
                     apply_preprod = false
                     currentBuild.result = 'UNSTABLE'
                 }
@@ -139,10 +139,11 @@ node {
                 sh 'set +e; terraform apply $DEPLOY_ENV.plan.out; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
-                    slackSend channel: '#ukcloud-opensource', color: 'good', message: "PreProd: Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
+                    slackMessage('good', 'PreProd: Changes Applied')
                 } else {
-                    slackSend channel: '#ukcloud-opensource', color: 'danger', message: "PreProd: Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackMessage('danger', 'PreProd: Apply Failed')
                     currentBuild.result = 'FAILURE'
+                    error 'PreProd: Apply Failed'
                 }
             }
         }
@@ -175,18 +176,18 @@ node {
                 currentBuild.result = 'SUCCESS'
             }
             if (exitCode == "1") {
-                slackSend channel: '#ukcloud-opensource', color: '#0080ff', message: "Production: Plan Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                slackMessage('#0080ff', 'Production: Plan Failed')
                 currentBuild.result = 'FAILURE'
                 error 'Plan failed for Production'
             }
             if (exitCode == "2") {
                 stash name: "production-plan", includes: "${env.DEPLOY_ENV}.plan.out"
-                slackSend channel: '#ukcloud-opensource', color: 'good', message: "Production: Plan Awaiting Approval: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                slackMessage('good', 'Production: Plan Awaiting Approval')
                 try {
                     input message: 'Apply Plan?', ok: 'Apply'
                     apply_prod = true
                 } catch (err) {
-                    slackSend channel: '#ukcloud-opensource', color: 'warning', message: "Production: Plan Discarded: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackMessage('warning', 'Production: Plan Discarded')
                     apply_prod = false
                     currentBuild.result = 'UNSTABLE'
                 }
@@ -203,9 +204,9 @@ node {
                 sh 'set +e; terraform apply $DEPLOY_ENV.plan.out; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
-                    slackSend channel: '#ukcloud-opensource', color: 'good', message: "Production: Changes Applied ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"    
+                    slackMessage('good', 'Production: Changes Applied')
                 } else {
-                    slackSend channel: '#ukcloud-opensource', color: 'danger', message: "Production: Apply Failed: ${env.JOB_NAME} - ${env.BUILD_NUMBER} ()"
+                    slackMessage('danger', 'Production: Apply Failed')
                     currentBuild.result = 'FAILURE'
                 }
             }
