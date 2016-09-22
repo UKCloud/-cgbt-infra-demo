@@ -77,7 +77,7 @@ node {
             }
         }
 
-        stage('Test: Deploy') {
+        stage('Test: Regression Tests') {
             sh 'terraform output jumpbox_address > jumpbox.address'
             def jumpbox = readFile('jumpbox.address').trim()
             echo "Running tests via jumpbox ${jumpbox}"
