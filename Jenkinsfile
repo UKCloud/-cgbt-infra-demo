@@ -214,7 +214,7 @@ node {
             }
         }
      
-        stage('Production: Apply') {
+        stage('Production: Deploy') {
             if (apply_prod) {
 
                 unstash 'production-plan'
