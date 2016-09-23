@@ -28,7 +28,7 @@ resource "openstack_compute_instance_v2" "proxy_host" {
   image_name  = "${var.IMAGE_NAME}"
   flavor_name = "${var.proxy_type}"
   key_pair    = "${openstack_compute_keypair_v2.ssh-keypair.name}"
-  security_groups = ["${openstack_networking_secgroup_v2.any_ssh.name}",
+  security_groups = ["${openstack_networking_secgroup_v2.internal_ssh.name}",
                      "${openstack_networking_secgroup_v2.any_web.name}"]
 
   user_data = "${data.template_file.proxy_config.rendered}"
