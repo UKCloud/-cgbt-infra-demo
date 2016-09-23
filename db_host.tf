@@ -10,7 +10,7 @@ data "template_file" "db_config" {
 }
 
 data "template_file" "schema_sql" {
-  template = "${file("templates/schema_sql.tpl")}"
+  template = "${file("templates/schema.sql")}"
   
   vars {
     APP_DB       = "${var.app_db_name}"
