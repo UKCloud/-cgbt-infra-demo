@@ -46,6 +46,12 @@ resource "openstack_compute_instance_v2" "jumpbox_host" {
     content = "${file(var.private_key_file)}"
     destination = "~/.ssh/id_rsa"
   }
+
+  provisioner "remote-exec" {
+    inline = [
+      "chmod go-rwx ~/.ssh/id_rsa"
+    ]
+  }
 }
 
 resource "null_resource" "jumpbox_hosts_file" {
