@@ -31,7 +31,7 @@ resource "openstack_compute_instance_v2" "proxy_host" {
   security_groups = ["${openstack_networking_secgroup_v2.any_ssh.name}",
                      "${openstack_networking_secgroup_v2.any_web.name}"]
 
-  user_data = "${data.template_file.jumpbox_config.rendered}"
+  user_data = "${data.template_file.proxy_config.rendered}"
 
   network {
     name = "${openstack_networking_network_v2.dmz.name}"

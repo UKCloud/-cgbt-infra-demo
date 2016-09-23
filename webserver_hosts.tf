@@ -20,7 +20,7 @@ resource "openstack_compute_instance_v2" "web_host" {
 
   count = "${var.num_webservers}"
 
-  user_data = "${data.template_file.jumpbox_config.rendered}"
+  user_data = "${element(data.template_file.web_config.*.rendered, count)}"
 
   network {
     name = "${openstack_networking_network_v2.dmz.name}"
