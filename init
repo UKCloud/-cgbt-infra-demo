@@ -9,6 +9,8 @@ init() {
       echo "Remote state already exist!"
       if [ -z $IGNORE_INIT ]; then
         exit 1
+      else
+        rm -fr .terraform/terraform.tfstate
       fi
     fi
   fi

@@ -86,7 +86,7 @@ node {
             def jumpbox = readFile('jumpbox.address').trim()
             echo "Running tests via jumpbox ${jumpbox}"
 
-            sh 'bundle install; bundle exec rake -t spec; echo \$? > status.regression'
+            sh 'set +e; bundle install; bundle exec rake -t spec; echo \$? > status.regression'
             def testsExitCode = readFile('status.regression').trim()
             if (testsExitCode == "0") {
                 slackMessage('good', 'Test: Regression Tests Successful')
@@ -104,7 +104,7 @@ node {
         env.DEPLOY_ENV = "preprod"
 
         // Mark the code build 'plan'....
-        stage('PreProd: Plan') {
+        stage('PreProd: Deploy') {
 
             // Output Terraform version
             sh "terraform --version"
@@ -131,19 +131,9 @@ node {
             }
             if (exitCode == "2") {
                 stash name: "preprod-plan", includes: "${env.DEPLOY_ENV}.plan.out"
-                slackMessage('good', 'PreProd: Plan Awaiting Approval')
-                try {
-                    input message: 'Apply Plan?', ok: 'Apply'
-                    apply_preprod = true
-                } catch (err) {
-                    slackMessage('warning', 'PreProd: Plan Discarded')
-                    apply_preprod = false
-                    currentBuild.result = 'UNSTABLE'
-                }
+                apply_preprod = true
             }
-        }
-     
-        stage('PreProd: Apply') {
+
             if (apply_preprod) {
 
                 unstash 'preprod-plan'

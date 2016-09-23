@@ -3,7 +3,7 @@ output "jumpbox_address" {
 }
 
 output "server_names" {
-	value = ["${list(openstack_compute_instance_v2.jumpbox_host.name, openstack_compute_instance_v2.proxy_host.name)}"]
+	value = ["${concat(list(openstack_compute_instance_v2.jumpbox_host.name, openstack_compute_instance_v2.proxy_host.name), openstack_compute_instance_v2.web_host.*.name)}"]
 }
 
 output "private_key" {

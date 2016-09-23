@@ -1,7 +1,7 @@
 # Deploy and configure the Jumpbox server
 
 data "template_file" "jumpbox_config" {
-  template = "${file("init.tpl")}"
+  template = "${file("templates/init.tpl")}"
   
   vars {
     hostname = "jump01"
