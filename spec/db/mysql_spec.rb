@@ -1,10 +1,14 @@
 require 'spec_helper'
 
-describe package('mysql') do
+describe package('mariadb') do
   it { should be_installed }
 end
 
-describe service('mysql') do
+describe package('mariadb-server') do
+  it { should be_installed }
+end
+
+describe service('mariadb') do
   it { should be_enabled }
   it { should be_running }
 end
