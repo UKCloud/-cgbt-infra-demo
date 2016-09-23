@@ -101,7 +101,7 @@ node {
             if (fileExists("status.teardown")) {
                 sh "rm status.teardown"
             }
-            sh 'set +e; terraform destroy -force -var-file ${env.DEPLOY_ENV}/${env.DEPLOY_ENV}.tfvars -detailed-exitcode; echo \$? > status.teardown'
+            sh "set +e; terraform destroy -force -var-file ${env.DEPLOY_ENV}/${env.DEPLOY_ENV}.tfvars -detailed-exitcode; echo \$? > status.teardown"
             def teardownExitCode = readFile('status.teardown').trim()
             if (teardownExitCode == "0") {
                 slackMessage('good', 'Test: Destroy Successful')
