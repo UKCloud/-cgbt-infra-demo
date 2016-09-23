@@ -37,11 +37,15 @@ resource "openstack_compute_instance_v2" "jumpbox_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities nmap-ncat"
-      #"sudo yum update -y --exclude=kernel"
+      "sudo yum -y install epel-release yum-plugin-priorities nmap-ncat",
+      "mkdir -p ~/.ssh"
     ]
   }
 
+  provisioner "file" {
+    content = "${file(var.private_key_file)}"
+    destination = "~/.ssh/id_rsa"
+  }
 }
 
 resource "null_resource" "jumpbox_hosts_file" {
