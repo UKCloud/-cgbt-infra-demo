@@ -64,6 +64,7 @@ resource "null_resource" "haproxy_config" {
 
   triggers {
     instance_ids = "${join(",", openstack_compute_instance_v2.web_host.*.id)},${openstack_compute_instance_v2.proxy_host.id}"
+    config = "${data.template_file.haproxy_cfg.rendered}"
   }
 
   connection {
