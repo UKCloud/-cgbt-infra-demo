@@ -39,7 +39,9 @@ resource "openstack_compute_instance_v2" "web_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities httpd"
+      "sudo yum -y install epel-release yum-plugin-priorities httpd",
+      "sudo systemctl enable httpd",
+      "sudo systemctl start httpd"
     ]
   }
 
