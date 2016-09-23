@@ -41,7 +41,7 @@ resource "openstack_compute_keypair_v2" "ssh-keypair" {
 }
 
 data "template_file" "hosts_file" {
-  template = "${file("hosts.tpl")}"
+  template = "${file("templates/hosts.tpl")}"
 
   vars {
     HOST_LIST = "${join("\n", formatlist("%s   %s", concat(list(openstack_compute_instance_v2.jumpbox_host.access_ip_v4, openstack_compute_instance_v2.proxy_host.access_ip_v4), openstack_compute_instance_v2.web_host.*.access_ip_v4), concat(list(openstack_compute_instance_v2.jumpbox_host.name, openstack_compute_instance_v2.proxy_host.name), openstack_compute_instance_v2.web_host.*.name) ))}"
