@@ -65,7 +65,7 @@ resource "null_resource" "webapp_config" {
 
   triggers {
     instance_ids = "${join(",", openstack_compute_instance_v2.web_host.*.id)}"
-    config = "${data.template_file.php_cfg.rendered}"
+    config = "${data.template_file.php_config.rendered}"
     app = "${file("appfiles/index.php")}"
   }
 
