@@ -68,7 +68,7 @@ node {
                 sh 'set +e; terraform apply $DEPLOY_ENV.plan.out; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
-                    slackMessage('good', 'Test: Changes Applied')
+                    // slackMessage('good', 'Test: Changes Applied')
                 } else {
                     slackMessage('danger', 'Test: Apply Failed')
                     currentBuild.result = 'FAILURE'
@@ -89,7 +89,7 @@ node {
             sh 'set +e; bundle install; bundle exec rake -t spec; echo \$? > status.regression'
             def testsExitCode = readFile('status.regression').trim()
             if (testsExitCode == "0") {
-                slackMessage('good', 'Test: Regression Tests Successful')
+                // slackMessage('good', 'Test: Regression Tests Successful')
             } else {
                 slackMessage('danger', 'Test: Regression Tests Failed')
                 currentBuild.result = 'FAILURE'
@@ -104,7 +104,7 @@ node {
             sh "set +e; terraform destroy -force -var-file ${env.DEPLOY_ENV}/${env.DEPLOY_ENV}.tfvars; echo \$? > status.teardown"
             def teardownExitCode = readFile('status.teardown').trim()
             if (teardownExitCode == "0") {
-                slackMessage('good', 'Test: Destroy Successful')
+                // slackMessage('good', 'Test: Destroy Successful')
             } else {
                 slackMessage('danger', 'Test: Destroy Failed')
                 currentBuild.result = 'FAILURE'
@@ -159,7 +159,7 @@ node {
                 sh 'set +e; terraform apply $DEPLOY_ENV.plan.out; echo \$? > status.apply'
                 def applyExitCode = readFile('status.apply').trim()
                 if (applyExitCode == "0") {
-                    slackMessage('good', 'PreProd: Changes Applied')
+                    // slackMessage('good', 'PreProd: Changes Applied')
                 } else {
                     slackMessage('danger', 'PreProd: Apply Failed')
                     currentBuild.result = 'FAILURE'
