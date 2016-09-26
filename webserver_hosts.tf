@@ -78,7 +78,7 @@ resource "null_resource" "webapp_config" {
 
     user = "${var.ssh_user}"
     private_key = "${file(var.private_key_file)}"
-    host = "${element(openstack_compute_instance_v2.web_host.*.access_ip_v4, index)}"
+    host = "${element(openstack_compute_instance_v2.web_host.*.access_ip_v4, count.index)}"
   }
 
   provisioner "file" {
