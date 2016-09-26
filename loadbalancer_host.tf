@@ -52,9 +52,12 @@ resource "openstack_compute_instance_v2" "proxy_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities haproxy",
+      "sudo yum -y install epel-release yum-plugin-priorities haproxy wget",
       "sudo systemctl enable haproxy",
-      "sudo systemctl start haproxy"
+      "sudo systemctl start haproxy",
+      "wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/hatop/hatop-0.7.7.tar.gz",
+      "tar zxvf hatop-0.7.7.tar.gz",
+      "sudo install -m 755 hatop-0.7.7/bin/hatop /usr/local/bin"
     ]
   }
 }
