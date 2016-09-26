@@ -14,7 +14,7 @@ describe port(80) do
 end
 
 describe 'should respond to an HTTP request' do
-  describe command('curl -k --stderr - https://localhost/index.php') do
+  describe command('curl -k --stderr - http://localhost/index.php') do
     its(:stdout) { should match /.*<h2>CGBT .* Demo WebApp<\/h2>.*/ }
   end
 end
