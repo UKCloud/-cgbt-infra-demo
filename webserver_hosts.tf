@@ -53,7 +53,7 @@ resource "openstack_compute_instance_v2" "web_host" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum -y install epel-release yum-plugin-priorities httpd php php-mysql",
-      "setsebool -P httpd_can_network_connect_db 1",
+      "sudo setsebool -P httpd_can_network_connect_db 1",
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd"
     ]
