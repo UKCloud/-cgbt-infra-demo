@@ -10,6 +10,19 @@ data "template_file" "web_config" {
   }
 }
 
+data "template_file" "php_config" {
+  template = "${file("templates/config.php")}"
+
+  vars {
+    DB_HOST = "${openstack_compute_instance_v2.db_host.access_ip_v4}"
+    DB_NAME = "${var.app_db_name}"
+    DB_PORT = "3306"
+    DB_USER = "${var.app_db_user}"
+    DB_PASSWORD = "${var.app_db_password}"
+    APP_ENVIRONMENT = "${var.app_environment}"
+  }
+}
+
 resource "openstack_compute_instance_v2" "web_host" {
   name        = "${format("web%02d", count.index + 1)}.${var.domain_name}"
   image_name  = "${var.IMAGE_NAME}"
@@ -42,6 +55,52 @@ resource "openstack_compute_instance_v2" "web_host" {
       "sudo yum -y install epel-release yum-plugin-priorities httpd",
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd"
+    ]
+  }
+
+}
+
+resource "null_resource" "webapp_config" {
+  depends_on = [ "openstack_compute_instance_v2.web_host", "openstack_compute_instance_v2.jumpbox_host" ]
+
+  triggers {
+    instance_ids = "${join(",", openstack_compute_instance_v2.web_host.*.id)}"
+    config = "${data.template_file.php_cfg.rendered}"
+    app = "${file("appfiles/index.php")}"
+  }
+
+  count = "${var.num_webservers}"
+
+  connection {
+    bastion_host = "${openstack_compute_floatingip_v2.jumpbox_host_ip.address}"
+    bastion_user = "centos"
+    bastion_private_key = "${file(var.private_key_file)}"
+
+    user = "${var.ssh_user}"
+    private_key = "${file(var.private_key_file)}"
+    host = "${element(openstack_compute_instance_v2.web_host.*.access_ip_v4, index)}"
+  }
+
+  provisioner "file" {
+    content = "${data.template_file.php_config.rendered}"
+    destination = "/tmp/config.php"
+  }
+
+  provisioner "file" {
+    content = "${file("appfiles/index.php")}"
+    destination = "/tmp/index.php"
+  }
+
+  provisioner "file" {
+    content = "${file("appfiles/favicon.ico")}"
+    destination = "/tmp/favicon.ico"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo cp /tmp/config.php /var/www/html/haproxy.cfg",
+      "sudo cp /tmp/index.php /var/www/html/index.php",
+      "sudo cp /tmp/favicon.ico /var/www/html/favicon.ico"
     ]
   }
 

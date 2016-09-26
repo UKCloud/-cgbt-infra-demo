@@ -28,3 +28,4 @@ variable "num_webservers" { default = "2" }
 variable "app_db_name"     { default = "counters" }
 variable "app_db_user"     { default = "counters" }
 variable "app_db_password" { default = "Secret123#" }
+variable "app_environment" { default = "Testing" }
