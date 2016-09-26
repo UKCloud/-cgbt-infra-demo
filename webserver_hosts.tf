@@ -52,7 +52,7 @@ resource "openstack_compute_instance_v2" "web_host" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo yum -y install epel-release yum-plugin-priorities httpd",
+      "sudo yum -y install epel-release yum-plugin-priorities httpd php php-mysql",
       "sudo systemctl enable httpd",
       "sudo systemctl start httpd"
     ]
@@ -98,7 +98,7 @@ resource "null_resource" "webapp_config" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo cp /tmp/config.php /var/www/html/haproxy.cfg",
+      "sudo cp /tmp/config.php /var/www/html/config.php",
       "sudo cp /tmp/index.php /var/www/html/index.php",
       "sudo cp /tmp/favicon.ico /var/www/html/favicon.ico"
     ]
