@@ -32,7 +32,7 @@ resource "openstack_networking_subnet_v2" "internal_subnet" {
 resource "openstack_networking_router_interface_v2" "gw_if_1" {
   region = ""
   router_id = "${openstack_networking_router_v2.internet_gw.id}"
-  subnet_id = "${openstack_networking_subnet_v2.subnet_cidr.id}"
+  subnet_id = "${openstack_networking_subnet_v2.internal_subnet.id}"
 }
 
 resource "openstack_compute_keypair_v2" "ssh-keypair" {
