@@ -34,7 +34,7 @@ $month = $res->fetch_assoc();
 </head>
 <body>
 	<table width="100%" height="100%">
-    <tr><td align="center" valign="center"><h2>Central Government Business & Technology (CGBT) <?php echo $app_environment ?> Demo WebApp</h2></td></tr>
+    <tr><td align="center" valign="center"><h2>Continuous Deployment <?php echo $app_environment ?> Demo WebApp</h2></td></tr>
 	<tr><td align="center" valign="center">Today: <?php echo $today['count_value'] ?><br>
 	This Week: <?php echo $week['week_count'] ?><br>
 	This Month: <?php echo $month['month_count'] ?></td>
