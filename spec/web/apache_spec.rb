@@ -15,6 +15,6 @@ end
 
 describe 'should respond to an HTTP request' do
   describe command('curl -k --stderr - http://localhost/index.php') do
-    its(:stdout) { should match /.*<h2>Central Government Business & Technology \(CGBT\) .* Demo WebApp<\/h2>.*/ }
+    its(:stdout) { should match /.*<h2>Continuous Deployment .* Demo WebApp<\/h2>.*/ }
   end
 end
