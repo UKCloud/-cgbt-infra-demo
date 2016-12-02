@@ -18,6 +18,11 @@ data "template_file" "haproxy_cfg" {
   }
 }
 
+resource "openstack_compute_floatingip_v2" "proxy_host_ip" {
+  region = ""
+  pool = "${var.OS_INTERNET_NAME}"
+}
+
 resource "openstack_compute_instance_v2" "proxy_host" {
   name        = "proxy01.${var.domain_name}"
   image_name  = "${var.IMAGE_NAME}"
@@ -30,7 +35,7 @@ resource "openstack_compute_instance_v2" "proxy_host" {
 
   network {
     name = "${openstack_networking_network_v2.internal.name}"
-    #floating_ip = "${openstack_compute_floatingip_v2.proxy_host_ip.address}"
+    floating_ip = "${openstack_compute_floatingip_v2.proxy_host_ip.address}"
   }
 
   depends_on = [ "openstack_compute_instance_v2.jumpbox_host" ]
@@ -89,7 +94,3 @@ resource "null_resource" "haproxy_config" {
 
 }
 
-resource "openstack_compute_floatingip_v2" "proxy_host_ip" {
-  region = ""
-  pool = "${var.OS_INTERNET_NAME}"
-}
