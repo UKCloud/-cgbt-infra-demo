@@ -94,5 +94,5 @@ resource "openstack_compute_floatingip_v2" "proxy_host_ip" {
 
   region = ""
   pool = "${var.OS_INTERNET_NAME}"
-  instance_id = "${openstack_compute_instance_v2.proxy_host}"
+  instance_id = "${openstack_compute_instance_v2.proxy_host.id}"
 }
