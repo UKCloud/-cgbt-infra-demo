@@ -30,7 +30,7 @@ resource "openstack_compute_instance_v2" "db_host" {
   user_data = "${data.template_file.db_config.rendered}"
 
   network {
-    name = "${openstack_networking_network_v2.dmz.name}"
+    name = "${openstack_networking_network_v2.internal.name}"
   }
 
   depends_on = [ "openstack_compute_instance_v2.jumpbox_host" ]

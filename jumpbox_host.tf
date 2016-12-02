@@ -24,8 +24,8 @@ resource "openstack_compute_instance_v2" "jumpbox_host" {
   user_data = "${data.template_file.jumpbox_config.rendered}"
 
   network {
-    name = "${openstack_networking_network_v2.dmz.name}"
-    fixed_ip_v4 = "${cidrhost(var.DMZ_Subnet, 5)}"
+    name = "${openstack_networking_network_v2.internal.name}"
+    fixed_ip_v4 = "${cidrhost(var.subnet_cidr, 5)}"
     floating_ip = "${openstack_compute_floatingip_v2.jumpbox_host_ip.address}"
   }
 

@@ -34,7 +34,7 @@ resource "openstack_compute_instance_v2" "proxy_host" {
   user_data = "${data.template_file.proxy_config.rendered}"
 
   network {
-    name = "${openstack_networking_network_v2.dmz.name}"
+    name = "${openstack_networking_network_v2.internal.name}"
     floating_ip = "${openstack_compute_floatingip_v2.proxy_host_ip.address}"
   }
 

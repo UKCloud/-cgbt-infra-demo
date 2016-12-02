@@ -36,7 +36,7 @@ resource "openstack_compute_instance_v2" "web_host" {
   user_data = "${element(data.template_file.web_config.*.rendered, count)}"
 
   network {
-    name = "${openstack_networking_network_v2.dmz.name}"
+    name = "${openstack_networking_network_v2.internal.name}"
   }
 
   depends_on = [ "openstack_compute_instance_v2.jumpbox_host" ]
