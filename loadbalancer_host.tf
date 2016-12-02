@@ -90,9 +90,6 @@ resource "null_resource" "haproxy_config" {
 }
 
 resource "openstack_compute_floatingip_v2" "proxy_host_ip" {
-  depends_on = [ "openstack_compute_instance_v2.proxy_host" ]
-
   region = ""
   pool = "${var.OS_INTERNET_NAME}"
-  instance_id = "${openstack_compute_instance_v2.proxy_host.id}"
 }
