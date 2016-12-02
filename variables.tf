@@ -18,7 +18,11 @@ variable "ssh_keypair_name" { default = "terraform-keypair" }
 variable "public_key_file"  { default = "~/.ssh/user.pub" }
 variable "private_key_file" { default = "~/.ssh/user.private" }
 
-variable "DMZ_Subnet"  { default = "10.0.0.0/24" }
+variable "router_name" { default = "InternetGW" }
+variable "network_name" { default = "Internal" }
+variable "subnet_name" { default = "internal_subnet" }
+
+variable "subnet_cidr"  { default = "10.0.0.0/24" }
 variable "domain_name" { default = "example.com" }
 
 variable "ssh_user" { default = "centos" }
